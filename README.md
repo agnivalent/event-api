@@ -1,36 +1,22 @@
-# event-api
+# Event API
 
 FIXME: description
 
-## Installation
+## Run locally
 
-Download from http://example.com/FIXME.
+To run locally, execute `lein run` (requires `leiningen`)
 
-## Usage
+## Staging
 
-FIXME: explanation
+You can use staging on heroku: https://event-api-staging.herokuapp.com/
 
-    $ java -jar event-api-0.1.0-standalone.jar [args]
+## Methods
 
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+FIXME: describe API methods
 
 ## License
 
-Copyright © 2017 FIXME
+Copyright © 2017 Event API
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

@@ -1,6 +1,6 @@
 (defproject event-api "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "API for storing and querying statistics on events"
+  :url "https://event-api-staging.herokuapp.com/"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
