@@ -4,12 +4,14 @@
             [compojure.route :as route]
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [ring.middleware.reload :refer [wrap-reload]]
+            [ring.middleware.json :refer [wrap-json-response]]))
 
 (defn splash []
   {:status 200
    :headers {"Content-Type" "text/plain"}
-   :body "Hello!"})
+   :body {:keke "kdsaoko"}})
 
 (defroutes app
   (GET "/" []
@@ -19,4 +21,4 @@
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
-    (jetty/run-jetty (site #'app) {:port port :join? false})))
+    (jetty/run-jetty (wrap-json-response (wrap-reload (site #'app))) {:port port :join? false})))
