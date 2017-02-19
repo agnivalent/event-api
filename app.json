@@ -1,0 +1,5 @@
+{
+  "name": "Event API",
+  "description": "A barebones Clojure app",
+  "image": "heroku/clojure"
+}
