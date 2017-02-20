@@ -22,8 +22,15 @@ To deploy as a jar, create uberjar (`lein uberjar`), then run:
 
 - exists
   Check whether the input with this data exists.
+
+  method: `GET`
+
   path: `/events/exists`
+
   input: `{"user-id": ID, "action": ACTION, "time-stamp": TIME-STAMP}`
+
   example:
-      $ curl -H "Content-Type: application/json" -X GET -d '{"user-id": 1, "action": "koko", "time-stamp": "2016-12-12"}' https://event-api-staging.herokuapp.com/events/exists
-      false
+  ```sh
+  $ curl -H "Content-Type: application/json" -X GET -d '{"user-id": 1, "action": "koko", "time-stamp": "2016-12-12"}' https://event-api-staging.herokuapp.com/events/exists
+  false
+  ```
