@@ -1,6 +1,7 @@
 # Event API
 
 This is a JSON API for storing and querying statistics on events.
+
 It uses non-persistent storage (datascript), so the data is lost if the app is being reset.
 
 ## Run locally
@@ -16,7 +17,10 @@ You can use staging on heroku: https://event-api-staging.herokuapp.com/
 To deploy to heroku, create a new instance and push to heroku remote, as usual.
 
 To deploy as a jar, create uberjar (`lein uberjar`), then run:
-    java -cp target/uberjar/event-api-standalone.jar clojure.main -m event-api.core
+
+```
+java -cp target/uberjar/event-api-standalone.jar clojure.main -m event-api.core
+```
 
 ## Methods
 
