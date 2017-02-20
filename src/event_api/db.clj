@@ -1,5 +1,6 @@
 (ns event-api.db
-  (:require [datascript.core :as d]))
+  (:require [datascript.core :as d]
+            [clj-time.coerce :as c]))
 
 ;; datascript seems not to be supporting types other than :db.type/ref
 (def schema {:event/action {;; :db/valueType :db.type/string
@@ -13,19 +14,6 @@
                                 :db/doc "Date and time at which action was performed"}})
 
 (def conn (d/create-conn schema))
-
-(d/transact! conn [{:event/user-id 1
-                    :event/action "Create"
-                    :event/time-stamp "2016-02-12T00:14:41Z"}
-                   {:event/user-id 2
-                    :event/action "Create"
-                    :event/time-stamp "2016-02-13T00:14:41Z"}
-                   {:event/user-id 1
-                    :event/action "Update"
-                    :event/time-stamp "2016-02-13T00:50:41Z"}
-                   {:event/user-id 3
-                    :event/action "Update"
-                    :event/time-stamp "2016-02-12T00:14:41Z"}])
 
 (defn add-event! [{:keys [user-id action time-stamp]}]
   "adds an event and returns id"
@@ -43,18 +31,17 @@
              [?e :event/user-id ?u]
              [?e :event/action ?a]
              [?e :event/time-stamp ?t]]
-           @conn [user-id action time-stamp])
+           @conn [user-id action (c/to-long time-stamp)])
       empty?
       not))
 
 (defn time-of-last-action [user-id]
-  (ffirst (d/q '[:find (max ?t)
-                 :in $ ?u
-                 :where
-                 [?e :event/user-id ?u]
-
-                 [?e :event/time-stamp ?t]]
-               @conn user-id)))
+  (c/from-long (ffirst (d/q '[:find (max ?t)
+                              :in $ ?u
+                              :where
+                              [?e :event/user-id ?u]
+                              [?e :event/time-stamp ?t]]
+                            @conn user-id))))
 
 (defn users-performed-something [time-stamp]
   (map first (d/q '[:find ?u
@@ -62,12 +49,12 @@
                     :where
                     [?e :event/user-id ?u]
                     [?e :event/time-stamp ?t]]
-                  @conn time-stamp)))
+                  @conn (c/to-long time-stamp))))
 
 (defn time-last-performed [action]
-  (ffirst (d/q '[:find (max ?t)
-                 :in $ ?a
-                 :where
-                 [?e :event/action ?a]
-                 [?e :event/time-stamp ?t]]
-               @conn action)))
+  (c/from-long (ffirst (d/q '[:find (max ?t)
+                              :in $ ?a
+                              :where
+                              [?e :event/action ?a]
+                              [?e :event/time-stamp ?t]]
+                            @conn action))))

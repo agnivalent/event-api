@@ -6,19 +6,22 @@
             [ring.util.response :refer [response]]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
-            [event-api.db :as db]))
+            [event-api.db :as db]
+            [clj-time.format :as f]
+            [clj-time.coerce :as c]))
 
 (defroutes app-routes
   (GET "/events/exists" {:keys [params]}
        (response (str (db/exists? (params :user-id) (params :action) (params :time-stamp)))))
   (GET "/events/time-of-last-action" {:keys [params]}
-       (response (db/time-of-last-action (params :user-id))))
+       (response (str (db/time-of-last-action (params :user-id)))))
   (GET "/events/users-performed-something" {:keys [params]}
-       (response (db/users-performed-something (params :time-stamp))))
+       (response (db/users-performed-something (f/parse (params :time-stamp)))))
   (GET "/events/time-last-performed" {:keys [params]}
-       (response (db/time-last-performed (params :action))))
+       (response (str (db/time-last-performed (params :action)))))
   (POST "/events" {:keys [params]}
-        (response {:id (db/add-event! (select-keys params [:user-id :action :time-stamp]))})))
+        (let [event (select-keys params [:user-id :action :time-stamp])]
+          (response {:id (db/add-event! (assoc event :time-stamp (f/parse (:time-stamp event))))}))))
 
 (def app
   (-> (site #'app-routes)

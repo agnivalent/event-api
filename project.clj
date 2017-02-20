@@ -10,7 +10,8 @@
                  ;;[http-kit "2.2.0"]
                  [compojure "1.5.2"]
                  [environ "1.1.0"]
-                 [datascript "0.15.5"]]
+                 [datascript "0.15.5"]
+                 [clj-time "0.8.0"]]
   :plugins [[lein-environ "1.1.0"]]
   :min-lein-version "2.0.0"
   :main ^:skip-aot event-api.core
