@@ -1,17 +1,18 @@
 (ns event-api.db
   (:require [datascript.core :as d]))
 
-;; (def schema {:event/action {:db/valueType :db.type/string
-;;                             :db/cardinality :db.cardinality/one
-;;                             :db/doc "Action performed"}
-;;              :event/user-id {:db/valueType :db.type/integer
-;;                              :db/cardinality :db.cardinality/one
-;;                              :db/doc "ID of the user who performed the action"}
-;;              :event/time-stamp {:db/valueType :db.type/datetime
-;;                                 :db/cardinality :db.cardinality/one
-;;                                 :db/doc "Date and time at which action was performed"}})
+;; datascript seems not to be supporting types other than :db.type/ref
+(def schema {:event/action {;; :db/valueType :db.type/string
+                            :db/cardinality :db.cardinality/one
+                            :db/doc "Action performed"}
+             :event/user-id {;; :db/valueType :db.type/long
+                             :db/cardinality :db.cardinality/one
+                             :db/doc "ID of the user who performed the action"}
+             :event/time-stamp {;; :db/valueType :db.type/instant
+                                :db/cardinality :db.cardinality/one
+                                :db/doc "Date and time at which action was performed"}})
 
-(def conn (d/create-conn {}))
+(def conn (d/create-conn schema))
 
 (d/transact! conn [{:event/user-id 1
                     :event/action "Create"
@@ -25,6 +26,15 @@
                    {:event/user-id 3
                     :event/action "Update"
                     :event/time-stamp "2016-02-12T00:14:41Z"}])
+
+(defn add-event! [{:keys [user-id action time-stamp]}]
+  "adds an event and returns id"
+  (->
+   (d/transact! conn [{:event/user-id user-id
+                       :event/action action
+                       :event/time-stamp time-stamp}])
+   :tx-data
+   ffirst))
 
 (defn exists? [user-id action time-stamp]
   (-> (d/q '[:find ?e
@@ -55,9 +65,9 @@
                   @conn time-stamp)))
 
 (defn time-last-performed [action]
-  (map first (d/q '[:find (max ?t)
-                    :in $ ?a
-                    :where
-                    [?e :event/action ?a]
-                    [?e :event/time-stamp ?t]]
-                  @conn action)))
+  (ffirst (d/q '[:find (max ?t)
+                 :in $ ?a
+                 :where
+                 [?e :event/action ?a]
+                 [?e :event/time-stamp ?t]]
+               @conn action)))
