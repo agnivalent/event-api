@@ -4,11 +4,10 @@
             [ring.adapter.jetty :as jetty]
             [environ.core :refer [env]]
             [ring.util.response :refer [response]]
-            [ring.middleware.reload :refer [wrap-reload]]
+            ;; [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.json :refer [wrap-json-response wrap-json-params]]
             [event-api.db :as db]
-            [clj-time.format :as f]
-            [clj-time.coerce :as c]))
+            [clj-time.format :as f]))
 
 (defroutes app-routes
   (GET "/events/exists" {:keys [params]}
@@ -25,7 +24,7 @@
 
 (def app
   (-> (site #'app-routes)
-      (wrap-reload)
+      ;; (wrap-reload)
       (wrap-json-params)
       (wrap-json-response)))
 

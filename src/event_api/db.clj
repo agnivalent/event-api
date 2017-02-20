@@ -25,6 +25,7 @@
    ffirst))
 
 (defn exists? [user-id action time-stamp]
+  "does event with this data exist?"
   (-> (d/q '[:find ?e
              :in $ [?u ?a ?t]
              :where
@@ -36,6 +37,7 @@
       not))
 
 (defn time-of-last-action [user-id]
+  "when did this user performed an action last time?"
   (c/from-long (ffirst (d/q '[:find (max ?t)
                               :in $ ?u
                               :where
@@ -44,6 +46,7 @@
                             @conn user-id))))
 
 (defn users-performed-something [time-stamp]
+  "return a list of users that did something at that time"
   (map first (d/q '[:find ?u
                     :in $ ?t
                     :where
@@ -52,6 +55,7 @@
                   @conn (c/to-long time-stamp))))
 
 (defn time-last-performed [action]
+  "when was this action performed last time?"
   (c/from-long (ffirst (d/q '[:find (max ?t)
                               :in $ ?a
                               :where
