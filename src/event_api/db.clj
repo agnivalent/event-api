@@ -15,6 +15,11 @@
 
 (def conn (d/create-conn schema))
 
+(defn- restore-date [l]
+  (if l
+    (c/from-long l)
+    "never"))
+
 (defn add-event! [{:keys [user-id action time-stamp]}]
   "adds an event and returns id"
   (->
@@ -38,7 +43,7 @@
 
 (defn time-of-last-action [user-id]
   "when did this user performed an action last time?"
-  (c/from-long (ffirst (d/q '[:find (max ?t)
+  (restore-date (ffirst (d/q '[:find (max ?t)
                               :in $ ?u
                               :where
                               [?e :event/user-id ?u]
@@ -56,7 +61,7 @@
 
 (defn time-last-performed [action]
   "when was this action performed last time?"
-  (c/from-long (ffirst (d/q '[:find (max ?t)
+  (restore-date (ffirst (d/q '[:find (max ?t)
                               :in $ ?a
                               :where
                               [?e :event/action ?a]
